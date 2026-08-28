@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.github/
+data/processed/
+mlruns/
+mlflow_store/
+mlartifacts/
+.dvc/
+.pytest_cache/
+dashboard/
+tests/
+reports/
+README.md

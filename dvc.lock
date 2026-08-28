@@ -1,0 +1,87 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python -m src.data.download_data
+    outs:
+    - path: data/raw/Test.csv
+      hash: md5
+      md5: bf8d04fcd0186ed2d1329ff07a268062
+      size: 527709
+    - path: data/raw/Train.csv
+      hash: md5
+      md5: 15beebcfe5973d4ac230a5d9182c713a
+      size: 869537
+  validate:
+    cmd: python -m src.data.validate_data
+    deps:
+    - path: data/raw/Train.csv
+      hash: md5
+      md5: 15beebcfe5973d4ac230a5d9182c713a
+      size: 869537
+    - path: src/data/validate_data.py
+      hash: md5
+      md5: 24aeb2817386fb5f3ee7387c2526d8b8
+      size: 2569
+  build_features:
+    cmd: python -m src.features.build_features
+    deps:
+    - path: data/raw/Train.csv
+      hash: md5
+      md5: 15beebcfe5973d4ac230a5d9182c713a
+      size: 869537
+    - path: params.yaml
+      hash: md5
+      md5: d9439e48fb6f9e5cfd1883f6f4d97474
+      size: 604
+    - path: src/features/build_features.py
+      hash: md5
+      md5: c5c78d2a785fe852a3000ad98c993148
+      size: 3634
+    outs:
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 69984bd54b5396f3204503d7b8697240
+      size: 836200
+  train:
+    cmd: python -m src.models.train
+    deps:
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 69984bd54b5396f3204503d7b8697240
+      size: 836200
+    - path: params.yaml
+      hash: md5
+      md5: d9439e48fb6f9e5cfd1883f6f4d97474
+      size: 604
+    - path: src/models/train.py
+      hash: md5
+      md5: 10b3a1ca87613ca09bbc9dfaeba90f39
+      size: 4600
+    outs:
+    - path: mlflow_store
+      hash: md5
+      md5: 55e4c0eb55bc178461182a8b1424e0c6.dir
+      size: 872448
+      nfiles: 1
+    - path: mlruns
+      hash: md5
+      md5: d66c5e2ea3c5c3349c56517f81b46523.dir
+      size: 15862750
+      nfiles: 15
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+    - path: mlflow_store
+      hash: md5
+      md5: 660f74fc513c67aad40f85fff9e9e09f.dir
+      size: 872448
+      nfiles: 1
+    - path: mlruns
+      hash: md5
+      md5: d66c5e2ea3c5c3349c56517f81b46523.dir
+      size: 15862750
+      nfiles: 15
+    - path: src/models/evaluate.py
+      hash: md5
+      md5: 43f776690e4fef132f3321fa788498bd
+      size: 2122
